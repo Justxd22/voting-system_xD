@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "./components/VoteCard";
 import AdvertCard from "./components/AdvertCard";
 import { voteOptions } from "./data/VoteeData";
@@ -7,15 +7,56 @@ import "./assets/styles/Navbar.css";
 import "./assets/styles/background-styles.css";
 import "./assets/styles/Footer.css";
 
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+// import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAKa9RhQtZ8769amZmjD5rbOu88RodbqvY",
+  authDomain: "votinnnnlowkeycool.firebaseapp.com",
+  projectId: "votinnnnlowkeycool",
+  storageBucket: "votinnnnlowkeycool.firebasestorage.app",
+  messagingSenderId: "958563482597",
+  appId: "1:958563482597:web:63a0d76812792ad2534d0c",
+  measurementId: "G-MJJPWEHXPZ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+//const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+interface Result {
+  id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any; // Add specific fields from your collection if possible for better type safety
+}
+
 function App() {
   const [currentPage, setCurrentPage] = useState<"vote" | "results">("vote");
-  const [results] = useState(
-    voteOptions.map((option) => ({
-      option: option.name,
-      count: Math.floor(Math.random() * 100), // Placeholder data
-    }))
-  );
+  const [results, setResults] = useState<Result[]>([]);
+    // voteOptions.map((option) => ({
+    //   option: option.name,
+    //   count: Math.floor(Math.random() * 100), // Placeholder data
+    // }))
 
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "results"));
+          const items = querySnapshot.docs.map((doc) => ({
+            id: doc.id, // Document ID
+            ...doc.data(), // Document fields
+          }));
+          setResults(items);
+        } catch (error) {
+          console.error("Error fetching collection:", error);
+        }
+      }
+  
+      fetchData();
+    }, []);
+  
   const ResultsContent = () => {
     const sortedResults = [...results].sort((a, b) => b.count - a.count);
     const maxVotes = Math.max(...sortedResults.map((r) => r.count), 1);

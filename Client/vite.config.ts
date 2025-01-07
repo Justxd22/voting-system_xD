@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: 'vote-sys-improv', // Replace with your actual repository name
+  base: '/vote-sys-improv', // Replace with your actual repository name
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
