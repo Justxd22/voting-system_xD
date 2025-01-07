@@ -22,8 +22,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           for (const doc of snapshot.docs) {
     
             const backend = doc.data();
-            const url = backend.url;
+            let url = backend.url;
             if (url === deploymentUrl) continue; //skip current server
+            else if (!(url.includes("http"))){
+                url = "https://" + url;
+            }
     
             try {
               // Call the backend's `/api/online` endpoint
