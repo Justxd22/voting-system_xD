@@ -1,5 +1,5 @@
-import '../../utils/firebase';
-import { deploymentUrl } from '../../utils/firebase';
+import '@/utils/firebase';
+import { deploymentUrl } from '@/utils/deploy_url';
 import { NextApiRequest, NextApiResponse } from "next";
 
 
